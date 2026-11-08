@@ -1,0 +1,1585 @@
+{
+  "info": {
+    "_postman_id": "d258598b-203b-49ed-a867-22c3b25775b0",
+    "name": "ERMS – Employee Reimbursement API",
+    "description": "Run folders top to bottom. Login requests store tokens; Create-claim requests store claim_id/item_id.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "employee_token",
+      "value": ""
+    },
+    {
+      "key": "approver_token",
+      "value": ""
+    },
+    {
+      "key": "approver2_token",
+      "value": ""
+    },
+    {
+      "key": "claim_id",
+      "value": ""
+    },
+    {
+      "key": "item_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Login – employee (rahul.verma)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"rahul.verma\",\n  \"password\": \"Password@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"employee_token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login – approver (priya.sharma)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"priya.sharma\",\n  \"password\": \"Password@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"approver_token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login – approver 2 (arjun.mehta)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"arjun.mehta\",\n  \"password\": \"Password@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set(\"approver2_token\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Employee – draft",
+      "item": [
+        {
+          "name": "Create claim with items",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Client visit \\u2013 Pune\",\n  \"description\": \"Two-day onsite\",\n  \"items\": [\n    {\n      \"category\": 1,\n      \"description\": \"Mumbai\\u2013Pune cab\",\n      \"expense_date\": \"2026-11-05\",\n      \"amount\": \"5000.00\"\n    },\n    {\n      \"category\": 2,\n      \"description\": \"Team lunch\",\n      \"expense_date\": \"2026-11-05\",\n      \"amount\": \"1500.00\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "const d = pm.response.json();",
+                  "pm.collectionVariables.set(\"claim_id\", d.id);",
+                  "if (d.items && d.items.length) pm.collectionVariables.set(\"item_id\", d.items[0].id);",
+                  "pm.test(\"DRAFT\", () => pm.expect(d.status).to.eql(\"DRAFT\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my claims",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/?mine=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ],
+              "query": [
+                {
+                  "key": "mine",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get claim",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update title/description",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Client visit \\u2013 Pune (updated)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add item (JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": 3,\n  \"description\": \"Hotel 1 night\",\n  \"expense_date\": \"2026-11-04\",\n  \"amount\": \"4500.00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Add item with receipt (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/items/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "category",
+                  "value": "4",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Broadband",
+                  "type": "text"
+                },
+                {
+                  "key": "expense_date",
+                  "value": "2026-11-01",
+                  "type": "text"
+                },
+                {
+                  "key": "amount",
+                  "value": "1299",
+                  "type": "text"
+                },
+                {
+                  "key": "receipt",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "description": "Pick any pdf/jpg/png under 5 MB for `receipt`."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update item amount",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/items/{{item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "items",
+                "{{item_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"4800.00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Lifecycle – happy path",
+      "item": [
+        {
+          "name": "Submit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/submit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "submit"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"SUBMITTED\", () => pm.expect(pm.response.json().status).to.eql(\"SUBMITTED\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approver queue",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/?status=SUBMITTED",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "SUBMITTED"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve – partial (per-item)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/approve/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "approve"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"id\": \"{{item_id}}\",\n      \"approved_amount\": \"4000.00\"\n    }\n  ],\n  \"comment\": \"Cab capped at policy rate.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Items not listed are approved in full. Add \"approved_override\": \"6500.00\" to force a claim-level total instead."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"APPROVED\", () => pm.expect(pm.response.json().status).to.eql(\"APPROVED\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve – full (no body) → 409 now",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/approve/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "approve"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Full approval needs no body. On an already-approved claim this returns 409 with current_status."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mark paid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/pay/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "pay"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_reference\": \"DEMO-NEFT-000123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"PAID\", () => pm.expect(pm.response.json().status).to.eql(\"PAID\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Events (history)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/events/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "events"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reviewed by me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/?reviewed_by_me=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ],
+              "query": [
+                {
+                  "key": "reviewed_by_me",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Lifecycle – reject & resubmit",
+      "item": [
+        {
+          "name": "Create another claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Home internet \\u2013 October\",\n  \"items\": [\n    {\n      \"category\": 4,\n      \"description\": \"Broadband bill\",\n      \"expense_date\": \"2026-11-01\",\n      \"amount\": \"1299.00\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "const d = pm.response.json();",
+                  "pm.collectionVariables.set(\"claim_id\", d.id);",
+                  "if (d.items && d.items.length) pm.collectionVariables.set(\"item_id\", d.items[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Submit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/submit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "submit"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject (comment required)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/reject/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "reject"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comment\": \"Attach the invoice and resubmit.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reopen (employee)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/reopen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "reopen"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"DRAFT\", () => pm.expect(pm.response.json().status).to.eql(\"DRAFT\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fix item",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/items/{{item_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "items",
+                "{{item_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"1199.00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Resubmit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/submit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "submit"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"submission_count 2\", () => pm.expect(pm.response.json().submission_count).to.eql(2));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approve by second approver",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver2_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/approve/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "approve"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Edge cases",
+      "item": [
+        {
+          "name": "Duplicate submit → 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/submit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "submit"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Edit after submit → 409",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"sneaky\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Employee tries to approve → 403",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/approve/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "approve"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject without comment → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/reject/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "reject"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Future expense date → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Time travel\",\n  \"items\": [\n    {\n      \"category\": 1,\n      \"description\": \"Cab\",\n      \"expense_date\": \"2099-01-01\",\n      \"amount\": \"100.00\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Over category cap → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Big lunch\",\n  \"items\": [\n    {\n      \"category\": 2,\n      \"description\": \"Lunch\",\n      \"expense_date\": \"2026-11-05\",\n      \"amount\": \"2500.00\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create empty claim",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Empty\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 201\", () => pm.response.to.have.status(201));",
+                  "const d = pm.response.json();",
+                  "pm.collectionVariables.set(\"claim_id\", d.id);",
+                  "if (d.items && d.items.length) pm.collectionVariables.set(\"item_id\", d.items[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "  …submit empty claim → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{employee_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/{{claim_id}}/submit/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims",
+                "{{claim_id}}",
+                "submit"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Approver's own claims (for the 403 demo)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token {{approver_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/claims/?mine=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "claims"
+              ],
+              "query": [
+                {
+                  "key": "mine",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Take the id of 'Finance offsite – Lonavala' (seeded), then POST /claims/{id}/approve/ as Priya → 403, as Arjun → 200."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

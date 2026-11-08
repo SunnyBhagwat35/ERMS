@@ -1,0 +1,122 @@
+[
+  {
+    "model": "accounts.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$8PbD0iUnzmu8UqiKBjsr3i$h5gYU++CEpv/QmFIOws2SiNrwilp3zeoagmp+1ItRxA=",
+      "username": "admin",
+      "first_name": "Admin",
+      "last_name": "User",
+      "email": "admin@erms.local",
+      "is_staff": true,
+      "is_superuser": true,
+      "is_active": true,
+      "date_joined": "2026-01-01T00:00:00Z",
+      "role": "APPROVER",
+      "employee_code": "ADM001",
+      "department": "IT",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$8PbD0iUnzmu8UqiKBjsr3i$h5gYU++CEpv/QmFIOws2SiNrwilp3zeoagmp+1ItRxA=",
+      "username": "priya.sharma",
+      "first_name": "Priya",
+      "last_name": "Sharma",
+      "email": "priya.sharma@erms.local",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T00:00:00Z",
+      "role": "APPROVER",
+      "employee_code": "APR001",
+      "department": "Finance",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$8PbD0iUnzmu8UqiKBjsr3i$h5gYU++CEpv/QmFIOws2SiNrwilp3zeoagmp+1ItRxA=",
+      "username": "arjun.mehta",
+      "first_name": "Arjun",
+      "last_name": "Mehta",
+      "email": "arjun.mehta@erms.local",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T00:00:00Z",
+      "role": "APPROVER",
+      "employee_code": "APR002",
+      "department": "Finance",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$8PbD0iUnzmu8UqiKBjsr3i$h5gYU++CEpv/QmFIOws2SiNrwilp3zeoagmp+1ItRxA=",
+      "username": "rahul.verma",
+      "first_name": "Rahul",
+      "last_name": "Verma",
+      "email": "rahul.verma@erms.local",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T00:00:00Z",
+      "role": "EMPLOYEE",
+      "employee_code": "EMP001",
+      "department": "Engineering",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$8PbD0iUnzmu8UqiKBjsr3i$h5gYU++CEpv/QmFIOws2SiNrwilp3zeoagmp+1ItRxA=",
+      "username": "neha.gupta",
+      "first_name": "Neha",
+      "last_name": "Gupta",
+      "email": "neha.gupta@erms.local",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T00:00:00Z",
+      "role": "EMPLOYEE",
+      "employee_code": "EMP002",
+      "department": "Marketing",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$1000000$8PbD0iUnzmu8UqiKBjsr3i$h5gYU++CEpv/QmFIOws2SiNrwilp3zeoagmp+1ItRxA=",
+      "username": "vikram.singh",
+      "first_name": "Vikram",
+      "last_name": "Singh",
+      "email": "vikram.singh@erms.local",
+      "is_staff": false,
+      "is_superuser": false,
+      "is_active": true,
+      "date_joined": "2026-01-01T00:00:00Z",
+      "role": "EMPLOYEE",
+      "employee_code": "EMP003",
+      "department": "Sales",
+      "groups": [],
+      "user_permissions": []
+    }
+  }
+]

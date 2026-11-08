@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Pastel palette. Tailwind v4 turns each --color-* token into bg-/text-/border- utilities. */
+@theme {
+  --color-paper: #eef2f5;
+  --color-ink: #243139;
+  --color-muted: #64737c;
+  --color-line: #d6dee5;
+
+  --color-mint-100: #e2f3ee;
+  --color-mint-300: #b6e0d4;
+  --color-mint-500: #7cc2af;
+  --color-mint-700: #4e9a86;
+
+  --color-butter-100: #fbf3d5;
+  --color-butter-300: #f3e09e;
+
+  --color-sky-pastel: #d5e4f6;
+  --color-rose-pastel: #f7d4d8;
+  --color-lilac-pastel: #e1d9f5;
+  --color-slate-pastel: #e4e9ee;
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+}
+
+/* Small set of reusable classes so JSX stays readable. */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-1 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors
+      disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mint-700;
+  }
+  .btn-primary {
+    @apply border-mint-500 bg-mint-500 text-ink hover:border-mint-700 hover:bg-mint-700 hover:text-white;
+  }
+  .btn-secondary {
+    @apply border-line bg-white text-ink hover:bg-slate-pastel;
+  }
+  .btn-danger {
+    @apply border-rose-pastel bg-white text-ink hover:bg-rose-pastel;
+  }
+  .input {
+    @apply w-full rounded-md border border-line bg-white px-3 py-1.5 text-sm text-ink
+      focus:border-mint-500 focus:outline-none focus:ring-2 focus:ring-mint-300;
+  }
+  .label {
+    @apply mb-1 block text-sm text-muted;
+  }
+  .card {
+    @apply rounded-lg border border-line bg-white;
+  }
+}

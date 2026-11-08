@@ -1,0 +1,9 @@
+[
+  {"model": "claims.expensecategory", "pk": 1, "fields": {"code": "TRAVEL", "name": "Travel (cab, train, flight)", "max_amount": "25000.00", "is_active": true}},
+  {"model": "claims.expensecategory", "pk": 2, "fields": {"code": "FOOD", "name": "Meals", "max_amount": "2000.00", "is_active": true}},
+  {"model": "claims.expensecategory", "pk": 3, "fields": {"code": "ACCOMMODATION", "name": "Hotel / stay", "max_amount": "10000.00", "is_active": true}},
+  {"model": "claims.expensecategory", "pk": 4, "fields": {"code": "INTERNET", "name": "Internet / phone", "max_amount": "1500.00", "is_active": true}},
+  {"model": "claims.expensecategory", "pk": 5, "fields": {"code": "OFFICE_SUPPLIES", "name": "Office supplies", "max_amount": "5000.00", "is_active": true}},
+  {"model": "claims.expensecategory", "pk": 6, "fields": {"code": "OTHER", "name": "Other (needs justification)", "max_amount": null, "is_active": true}},
+  {"model": "claims.expensecategory", "pk": 7, "fields": {"code": "ENTERTAINMENT", "name": "Client entertainment (discontinued)", "max_amount": "3000.00", "is_active": false}}
+]
