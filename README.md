@@ -37,6 +37,18 @@ npm run dev
 cd erms-backend && pytest                    # 37 tests
 ```
 
+Or you are just lazy and have docker installed on your machine ? Just do below things
+
+- if you are doing it for the first time
+```bash
+docker compose up --build
+```
+- And after the firs time
+```bash
+docker compose up 
+```
+And now just navigate to http://localhost:5173 for frontend and our API's are hosted on http://127.0.0.1:8000/api/ .
+
 ### Demo users (password for all: `Password@123`)
 
 | Username       | Role     |
@@ -167,7 +179,6 @@ Money is stored as `Decimal(12, 2)` and sent over the API as strings. Floats are
 - **SQLite.** Fine for a demo, but writes are serialised and `select_for_update` does nothing. Production should use PostgreSQL, where the existing row lock starts working with no code change.
 - **Receipts are stored on local disk** and served only when `DEBUG` is on. Production should use object storage (S3).
 - **No multi-level approval, delegation or notifications** (email or Slack).
-- **The frontend has no automated tests** and no pagination controls (the API pages at 20).
 
 ---
 

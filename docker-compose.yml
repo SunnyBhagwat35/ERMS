@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./erms-backend
+    command: >
+      sh -c "python manage.py migrate --noinput && python manage.py loaddata users categories && python manage.py seed_claims && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./erms-backend:/app          # live code, and db.sqlite3 + media/ persist on the host
+    env_file:
+      - path: ./erms-backend/.env    # optional; settings fall back to dev defaults
+        required: false
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./erms-frontend
+    volumes:
+      - ./erms-frontend:/app
+      - /app/node_modules           
+    environment:
+      VITE_API_URL: http://localhost:8000/api
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
