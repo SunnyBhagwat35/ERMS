@@ -25,20 +25,39 @@ const APPROVER_TABS = [
   { key: "mine", label: "My own claims", params: { mine: "true" } },
 ];
 
+// we are driving pagination by API's next/prev this is just to calculate things
+const PAGE_SIZE = 20;
+
 export default function ClaimsListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
-  const { items, count, status, error } = useSelector((state) => state.claims.list);
+  const { items, count, hasNext, hasPrevious, status, error } = useSelector((state) => state.claims.list);
 
   const isApprover = user.role === "APPROVER";
   const tabs = isApprover ? APPROVER_TABS : EMPLOYEE_TABS;
   const [tabKey, setTabKey] = useState(tabs[0].key);
+  const [page, setPage] = useState(1);
   const tab = tabs.find((t) => t.key === tabKey) ?? tabs[0];
 
   useEffect(() => {
-    dispatch(fetchClaims(tab.params));
-  }, [dispatch, tab]);
+    dispatch(fetchClaims({ ...tab.params, page }));
+  }, [dispatch, tab, page]);
+
+  // DRF returns 404 "Invalid page." if the page no longer exists (e.g. claims moved
+  // out of this tab). Fall back to page 1 instead of showing an error.
+  useEffect(() => {
+    if (status === "failed" && error?.status === 404 && page > 1) setPage(1);
+  }, [status, error, page]);
+
+  const selectTab = (key) => {
+    setTabKey(key);
+    setPage(1);
+  };
+
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const firstShown = (page - 1) * PAGE_SIZE + 1;
+  const lastShown = firstShown + items.length - 1;
 
   return (
     <div>
@@ -52,7 +71,7 @@ export default function ClaimsListPage() {
           <button
             key={t.key}
             type="button"
-            onClick={() => setTabKey(t.key)}
+            onClick={() => selectTab(t.key)}
             className={`rounded-md px-3 py-1.5 text-sm ${t.key === tab.key ? "bg-mint-100 text-mint-700 font-medium" : "text-muted hover:text-ink"}`}
           >
             {t.label}
@@ -104,8 +123,31 @@ export default function ClaimsListPage() {
           </tbody>
         </table>
       </div>
-      {status === "succeeded" && count > items.length && (
-        <p className="mt-2 text-xs text-muted">Showing {items.length} of {count}. Pagination is left as an exercise.</p>
+      {count > 0 && (hasNext || hasPrevious) && (
+        <div className="mt-3 flex items-center justify-between text-sm">
+          <span className="text-muted">
+            {status === "succeeded" ? `Showing ${firstShown}–${lastShown} of ${count}` : " "}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={!hasPrevious || status === "loading"}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </button>
+            <span className="text-muted">Page {page} of {totalPages}</span>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={!hasNext || status === "loading"}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

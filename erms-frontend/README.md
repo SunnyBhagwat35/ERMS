@@ -1,26 +1,38 @@
-# ERMS – frontend
+# ERMS frontend
 
-React 18 + Redux Toolkit + Tailwind v4, built with Vite. Talks to the Django backend in `erms-backend`.
+React 18 + Redux Toolkit + Tailwind v4, built with Vite. It talks only to the Django API in [erms-backend](../erms-backend/). For the overview and design decisions, see the [root README](../README.md).
 
 ## 1. Run it
 
+Requires Node 18+. Start the backend first (`python manage.py runserver`); it already allows CORS from `localhost:5173`.
+
 ```bash
 npm install
-cp .env.example .env          # VITE_API_URL defaults to http://127.0.0.1:8000/api
-npm run dev                   # http://localhost:5173
+cp .env.example .env    # VITE_API_URL defaults to http://127.0.0.1:8000/api
+npm run dev             # http://localhost:5173
 ```
 
-Start the backend first (`python manage.py runserver`); it already allows CORS from `localhost:5173`. Sign in with any demo user — the login page has one-click buttons, password `Password@123`.
+Sign in with any demo user. The login page has one-click buttons, and the password is `Password@123`.
 
-`npm run build` produces `dist/` for static hosting.
+`npm run build` writes a static bundle to `dist/`.
 
-## 2. Structure
+## 2. Screens
+
+| Page | Employee | Approver |
+|------|----------|----------|
+| **Claims list** | Tabs: All / Drafts / Submitted / Approved / Rejected / Paid | Tabs: To review / Approved / Paid / Rejected / Reviewed by me / My own claims |
+| **New claim** | Title, description, expense items with receipts | Same (approvers can file their own claims) |
+| **Claim detail** | Edit, delete, submit drafts; reopen rejected claims; history timeline | Approve (full or partial per item, or an override total), reject with comment, mark paid |
+
+Buttons come from the API's `allowed_actions` list. The UI never decides on its own whether an action is allowed.
+
+## 3. Structure
 
 ```
 src/
   main.jsx                   Provider + App
   App.jsx                    routes (react-router); fetchMe on refresh
-  index.css                  Tailwind import, pastel tokens, .btn / .input / .card classes
+  index.css                  Tailwind import, theme tokens, .btn / .input / .card classes
   api/client.js              axios instance, token header, 401 → login, toApiError()
   app/store.js               configureStore with three slices
   features/
@@ -30,27 +42,23 @@ src/
   components/                Layout, ProtectedRoute, StatusBadge, LifecycleStrip, Modal,
                              ErrorBanner, ItemForm, ApproveDialog, RejectDialog, EventTimeline
   pages/                     LoginPage, ClaimsListPage, NewClaimPage, ClaimDetailPage
-  utils/format.js            money(), date(), today()
+  utils/format.js            money() (INR), date(), today()
 ```
 
-## 3. How data flows
+## 4. How data flows
 
-1. A page dispatches a thunk: `dispatch(approveClaim({ id, body }))`.
-2. The thunk calls axios. The request interceptor adds `Authorization: Token …`.
-3. Success → the thunk resolves with the **fresh claim** from the API; the slice's `fulfilled` matcher writes it to `state.claims.current.claim`. Every mutation returns the full claim, so there is one reducer for all of them (`isAnyOf(...)`).
-4. Failure → `toApiError()` normalises the response into `{status, message, code, currentStatus, fieldErrors}` and the thunk rejects with it; the `rejected` matcher stores it in `state.claims.action.error`, which `ErrorBanner` shows.
-5. Pages call `dispatch(thunk).unwrap()` when they need to branch on success (close a dialog, navigate). On a 409 the detail page re-reads the claim, because the backend is telling us it moved.
+1. A page dispatches a thunk, for example `dispatch(approveClaim({ id, body }))`.
+2. The thunk calls axios, and the request interceptor adds `Authorization: Token …`.
+3. **Success:** every mutation endpoint returns the **fresh claim**. One shared `fulfilled` matcher (`isAnyOf(...)`) writes it to `state.claims.current.claim`, so there is one reducer for all mutations.
+4. **Failure:** `toApiError()` normalises the response into `{status, message, code, currentStatus, fieldErrors}`. The `rejected` matcher stores it in `state.claims.action.error`, and `ErrorBanner` displays it.
+5. When a page needs to act on the result (close a dialog, navigate), it calls `.unwrap()`. On a **409** the detail page fetches the claim again, because the backend is saying the claim changed underneath us.
 
-Item add/edit/remove endpoints return the item, not the claim, so those thunks `POST` then `GET` the claim — totals live on the claim.
+The item add/edit/remove endpoints return the item rather than the claim, so those thunks `POST` and then `GET` the claim. The totals live on the claim.
 
-## 4. Things deliberately left simple
+Money arrives as decimal strings. It is formatted for display only and never used in floating-point arithmetic. The approve dialog's running total is only a preview, and the backend computes the real total.
 
-- No pagination control (page size is 20; a footer note appears when there's more).
-- No optimistic updates; every mutation waits for the server and replaces the claim.
-- Token in `localStorage`. Fine for a demo; a real app would use an httpOnly cookie.
+## 5. Kept simple on purpose
+
+- The API pages at 20, and a footer note appears when there are more.
+- The token lives in `localStorage`.
 - `window.confirm` for delete.
-- No tests on the frontend; the behaviour that matters is tested in the backend.
-
-## 6. Palette
-
-Defined once in `index.css` under `@theme`: paper `#eef2f5`, ink `#243139`, mint `#7cc2af` (primary), butter `#fbf3d5` (reviewer notes), and one pastel per status — slate, sky, mint, rose, lilac. Change a token there and every `bg-mint-500` / `text-muted` follows.

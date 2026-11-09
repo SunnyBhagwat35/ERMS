@@ -58,7 +58,7 @@ const CLAIM_MUTATIONS = [createClaim, updateClaim, addItem, updateItem, removeIt
 // --- slice ----------------------------------------------------------------
 
 const initialState = {
-  list: { items: [], count: 0, status: "idle", error: null },
+  list: { items: [], count: 0, hasNext: false, hasPrevious: false, status: "idle", error: null },
   current: { claim: null, events: [], status: "idle", error: null },
   // Tracks the most recent mutation so pages can show a spinner or a 409/400 message.
   action: { status: "idle", error: null },
@@ -87,6 +87,9 @@ const claimsSlice = createSlice({
         state.list.status = "succeeded";
         state.list.items = action.payload.results; // DRF pagination envelope
         state.list.count = action.payload.count;
+        // next/previous are URLs or null; we only need to know if they exist.
+        state.list.hasNext = Boolean(action.payload.next);
+        state.list.hasPrevious = Boolean(action.payload.previous);
       })
       .addCase(fetchClaims.rejected, (state, action) => {
         state.list.status = "failed";
